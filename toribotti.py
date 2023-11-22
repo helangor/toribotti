@@ -7,8 +7,8 @@ from datetime import datetime
 
 URL_FILE = 'url.txt'
 ID_FILE = 'tori_ids.txt'
-TELEGRAM_BOT_TOKEN = '5593480384:AAGmKiwluDt5zBCbwcRyIxXo97I6N0sX3T8'
-TELEGRAM_OWN_USER_ID = 442989985
+TELEGRAM_BOT_TOKEN = 'bot_token'
+TELEGRAM_OWN_USER_ID = 123
 
 def find_tori_items():
     add_file_if_not_exits(URL_FILE)
