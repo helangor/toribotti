@@ -9,7 +9,7 @@ Scrapee toria ja laittaa tiedon telegrammilla uusista asioista
   - Voit lisätä useamman. Yksi url per yksi rivi.
 - Tee telegram botti ja lisää sen tokeni toribotti.py muuttujaan.
   - https://core.telegram.org/bots/tutorial
--  Hae telegrammista oman käyttäjän id
-  -  Etsi käyttäjä @userinfobot
-  -  kirjoita viesti /help
-  -  kopioi id
+-  Hae telegrammista oman käyttäjän id ja lisää toribotti.py muuttujaan.
+   - Etsi käyttäjä @userinfobot
+   - kirjoita viesti /help
+   - kopioi id
