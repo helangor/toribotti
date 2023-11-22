@@ -1,22 +1,29 @@
 import time
+import os
 import requests
 from bs4 import BeautifulSoup
 import telepot
 from datetime import datetime
 
+URL_FILE = 'url.txt'
+ID_FILE = 'tori_ids.txt'
+TELEGRAM_BOT_TOKEN = '5593480384:AAGmKiwluDt5zBCbwcRyIxXo97I6N0sX3T8'
+TELEGRAM_OWN_USER_ID = 442989985
+
 def find_tori_items():
-    telegram_bot_token = '5593480384:AAGmKiwluDt5zBCbwcRyIxXo97I6N0sX3T8'
-    bot = telepot.Bot(telegram_bot_token)
+    add_file_if_not_exits(URL_FILE)
+    add_file_if_not_exits(ID_FILE)
+    bot = telepot.Bot(TELEGRAM_BOT_TOKEN)
     x = 1;
 
     while True:
-        # Tekstitiedostossa voi olla useampi tori juttu katottavana, käy kaikki läpi
-        # Luo tälläinen tiedosto, jossa jokainen url omalla rivillä
-        urls = get_from_file('url.txt')
+        # Tekstitiedostossa voi olla url katottavana omilla riveillään. Tämä käy rivit läpi.
+        urls = get_from_file(URL_FILE)
         for url in urls:
             open_webpage_and_find_items(url, bot)
             print("Refreshed ", x," times")
             x = x+1
+        # Sleep ajan kanssa joutuu välillä pelailemaan, ettei tori blokkaa. 
         time.sleep(500)
 
        
@@ -38,23 +45,26 @@ def open_webpage_and_find_items(url, bot):
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, 'html.parser')
         items = soup.find_all(class_='item_row_flex')
-        id_file_name = 'tori_ids.txt'
-        already_found_ids = get_from_file(id_file_name)
+        already_found_ids = get_from_file(ID_FILE)
         for item in items:
             id = get_id(item['id'])
             
             if id not in already_found_ids:
                 # Tallentaa löydetyt id:t tekstitiedostoon
-                append_to_file(id, id_file_name)
-                #Botille annetaan oma telegram id 
-                bot.sendMessage(442989985, 'Katoppa tää: ' + item['href'])
+                append_to_file(id, ID_FILE)
+                bot.sendMessage(TELEGRAM_OWN_USER_ID, 'Katoppa tää: ' + item['href'])
         
     except Exception as e:
-        # Add datetime to error 
         dt_string = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-        error_text = dt_string + " " + str(e) 
+        error_text = dt_string + " " + str(e)
+        # Tallentaa virheviestit erilliseen tiedostoon
         append_to_file(error_text, 'errors.txt')
         time.sleep(30)
+        
+def add_file_if_not_exits(file_name):
+    if not os.path.exists(file_name):
+        with open(file_name, "w") as file:
+            print("Created ", file_name)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
