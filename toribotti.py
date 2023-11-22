@@ -4,15 +4,19 @@ from bs4 import BeautifulSoup
 import telepot
 from datetime import datetime
 
-def find_tori_items():    
-    bot = telepot.Bot('5593480384:AAGmKiwluDt5zBCbwcRyIxXo97I6N0sX3T8')
+def find_tori_items():
+    telegram_bot_token = '5593480384:AAGmKiwluDt5zBCbwcRyIxXo97I6N0sX3T8'
+    bot = telepot.Bot(telegram_bot_token)
     x = 1;
 
     while True:
-        #Tekstitiedostossa voi olla useampi tori juttu katottavana, käy kaikki läpi
+        # Tekstitiedostossa voi olla useampi tori juttu katottavana, käy kaikki läpi
+        # Luo tälläinen tiedosto, jossa jokainen url omalla rivillä
         urls = get_from_file('url.txt')
         for url in urls:
-            open_webpage_and_find_items(url)
+            open_webpage_and_find_items(url, bot)
+            print("Refreshed ", x," times")
+            x = x+1
         time.sleep(500)
 
        
@@ -28,7 +32,7 @@ def get_from_file(file_name):
         ids = file_object.read().splitlines()
         return ids
     
-def open_webpage_and_find_items(url):
+def open_webpage_and_find_items(url, bot):
     try:
         URL = url
         page = requests.get(URL)
@@ -40,12 +44,10 @@ def open_webpage_and_find_items(url):
             id = get_id(item['id'])
             
             if id not in already_found_ids:
+                # Tallentaa löydetyt id:t tekstitiedostoon
                 append_to_file(id, id_file_name)
+                #Botille annetaan oma telegram id 
                 bot.sendMessage(442989985, 'Katoppa tää: ' + item['href'])
-                #Antin id 454144950
-                
-        print("Refreshed ", x," times")
-        x = x+1
         
     except Exception as e:
         # Add datetime to error 
